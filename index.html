@@ -3,20 +3,22 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Meet Your Local Guardian - Panduan Wisata Healing Hybrid</title>
+    <title>Healing Culinary Explorer - Probolinggo</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
         :root {
-            --primary-blue: #2563eb;
-            --secondary-blue: #3b82f6;
-            --light-blue: #93c5fd;
-            --dark-blue: #1e40af;
-            --bg-color: #f8fafc;
-            --text-dark: #1e293b;
-            --text-light: #64748b;
+            --primary-color: #1a73e8;
+            --secondary-color: #4285f4;
+            --accent-color: #8ab4f8;
+            --light-color: #e8f0fe;
+            --dark-color: #0d47a1;
+            --text-color: #202124;
+            --text-light: #5f6368;
             --white: #ffffff;
-            --card-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            --border-radius: 12px;
         }
 
         * {
@@ -27,1083 +29,945 @@
         }
 
         body {
-            background-color: var(--bg-color);
-            color: var(--text-dark);
-            min-height: 100vh;
+            background-color: #f5f7fa;
+            color: var(--text-color);
+            line-height: 1.6;
         }
 
         .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 1rem;
+            max-width: 100%;
+            padding: 0 15px;
         }
 
         header {
+            background: linear-gradient(135deg, var(--primary-color), var(--dark-color));
+            color: var(--white);
+            padding: 20px 0;
             text-align: center;
-            margin-bottom: 2rem;
-        }
-
-        header h1 {
-            font-size: 2rem;
-            color: var(--dark-blue);
-            margin-bottom: 1rem;
-            font-weight: 700;
-        }
-
-        header p {
-            font-size: 1rem;
-            color: var(--text-light);
-            max-width: 700px;
-            margin: 0 auto;
-        }
-
-        /* Guide List Styles */
-        .guide-list-container {
-            width: 100%;
-            margin-bottom: 2rem;
+            box-shadow: var(--shadow);
             position: relative;
+            z-index: 10;
         }
 
-        .guide-list {
-            display: flex;
-            overflow-x: auto;
-            gap: 1rem;
-            padding: 1rem 0.5rem;
-            scrollbar-width: none;
-            scroll-behavior: smooth;
+        .logo {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 5px;
         }
 
-        .guide-list::-webkit-scrollbar {
-            display: none;
-        }
-
-        .guide-card {
-            min-width: 300px;
-            background: var(--white);
-            border-radius: 16px;
-            padding: 1.5rem;
-            box-shadow: var(--card-shadow);
-            display: flex;
-            flex-direction: column;
-            gap: 1rem;
-            border: 1px solid #e2e8f0;
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-            flex-shrink: 0;
-        }
-
-        .guide-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
-        }
-
-        .guide-header {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-        }
-
-        .guide-avatar {
-            width: 70px;
-            height: 70px;
-            border-radius: 50%;
-            object-fit: cover;
-            border: 3px solid var(--light-blue);
-        }
-
-        .guide-info {
-            flex: 1;
-        }
-
-        .guide-name {
-            font-size: 1.1rem;
-            font-weight: 600;
-            color: var(--dark-blue);
-            margin-bottom: 0.25rem;
-        }
-
-        .guide-location {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            font-size: 0.8rem;
-            color: var(--text-light);
-        }
-
-        .guide-location i {
-            color: #f59e0b;
-        }
-
-        .divider {
-            height: 1px;
-            background-color: #e2e8f0;
-            margin: 0.5rem 0;
-        }
-
-        .specialization-title {
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-            margin-bottom: 0.75rem;
-        }
-
-        .specialization-title i {
-            color: #f59e0b;
-            font-size: 1.1rem;
-        }
-
-        .specialization-title h3 {
-            font-size: 1rem;
-            font-weight: 600;
-            color: var(--text-dark);
-        }
-
-        .specialization-tags {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 0.5rem;
-        }
-
-        .specialization-tag {
-            background-color: var(--light-blue);
-            color: var(--dark-blue);
-            padding: 0.35rem 0.75rem;
-            border-radius: 20px;
-            font-size: 0.75rem;
-            font-weight: 500;
-        }
-
-        .chat-btn {
-            width: 100%;
-            background: linear-gradient(to right, var(--primary-blue), var(--secondary-blue));
-            color: white;
-            border: none;
-            padding: 0.75rem;
-            border-radius: 10px;
-            font-weight: 500;
-            cursor: pointer;
-            transition: all 0.3s;
-            margin-top: auto;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 0.5rem;
-        }
-
-        .chat-btn:hover {
-            background: linear-gradient(to right, var(--dark-blue), var(--primary-blue));
-        }
-
-        /* Chat Section Styles */
-        #chatSection {
-            display: none;
-            flex-direction: column;
-            height: 100vh;
-            width: 100%;
-            position: fixed;
-            top: 0;
-            left: 0;
-            background-color: var(--white);
-            z-index: 100;
-        }
-
-        .chat-header {
-            display: flex;
-            align-items: center;
-            padding: 1rem;
-            background-color: var(--primary-blue);
-            color: var(--white);
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-        }
-
-        .back-button {
-            background: none;
-            border: none;
-            color: var(--white);
-            font-size: 1.2rem;
-            margin-right: 1rem;
-            cursor: pointer;
-        }
-
-        .guide-avatar-chat {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            object-fit: cover;
-            border: 2px solid var(--white);
-            margin-right: 1rem;
-        }
-
-        .guide-info-chat h3 {
-            font-size: 1rem;
-            font-weight: 600;
-            margin-bottom: 0.2rem;
-        }
-
-        .guide-info-chat p {
-            font-size: 0.8rem;
+        .tagline {
+            font-size: 14px;
             opacity: 0.9;
         }
 
-        .chat-messages {
-            flex: 1;
-            padding: 1rem;
-            overflow-y: auto;
-            background-color: #f5f7fb;
+        .main-content {
+            padding: 20px 0;
         }
 
-        .message {
-            max-width: 80%;
-            margin-bottom: 1rem;
-            padding: 0.8rem 1rem;
-            border-radius: 1rem;
-            font-size: 0.95rem;
-            line-height: 1.4;
-            position: relative;
-            word-wrap: break-word;
+        .card {
+            background: var(--white);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            padding: 20px;
+            margin-bottom: 20px;
         }
 
-        .ai-message {
-            background-color: #e0e7ff;
-            color: var(--text-dark);
-            align-self: flex-start;
-            border-bottom-left-radius: 0.25rem;
-            margin-right: auto;
+        .card-title {
+            color: var(--primary-color);
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 15px;
             display: flex;
             align-items: center;
         }
 
-        .user-message {
-            background-color: var(--primary-blue);
-            color: var(--white);
-            align-self: flex-end;
-            border-bottom-right-radius: 0.25rem;
-            margin-left: auto;
+        .card-title i {
+            margin-right: 10px;
+            font-size: 20px;
         }
 
-        .audio-button {
-            background: none;
+        .map-container {
+            height: 300px;
+            width: 100%;
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            margin-bottom: 15px;
+            position: relative;
+        }
+
+        #map {
+            height: 100%;
+            width: 100%;
+        }
+
+        .btn {
+            display: inline-block;
+            background: var(--primary-color);
+            color: var(--white);
             border: none;
-            color: var(--dark-blue);
-            font-size: 1rem;
-            margin-left: 0.5rem;
+            padding: 12px 20px;
+            border-radius: var(--border-radius);
+            font-size: 14px;
+            font-weight: 500;
             cursor: pointer;
-            transition: color 0.2s;
+            transition: all 0.3s ease;
+            text-align: center;
+            text-decoration: none;
+            box-shadow: var(--shadow);
         }
 
-        .audio-button:hover {
-            color: var(--primary-blue);
+        .btn:hover {
+            background: var(--dark-color);
+            transform: translateY(-2px);
         }
 
-        .chat-input-container {
-            display: flex;
-            padding: 1rem;
-            background-color: var(--white);
-            border-top: 1px solid #e2e8f0;
+        .btn-secondary {
+            background: var(--light-color);
+            color: var(--primary-color);
         }
 
-        .chat-input {
-            flex: 1;
-            padding: 0.75rem 1rem;
-            border: 1px solid #cbd5e1;
-            border-radius: 2rem;
-            font-size: 1rem;
+        .btn-secondary:hover {
+            background: #d2e3fc;
+        }
+
+        .btn-block {
+            display: block;
+            width: 100%;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 500;
+            color: var(--text-color);
+        }
+
+        select, input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid #dfe1e5;
+            border-radius: var(--border-radius);
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+
+        select:focus, input:focus {
             outline: none;
-            transition: border-color 0.3s;
+            border-color: var(--accent-color);
+            box-shadow: 0 0 0 2px var(--light-color);
         }
 
-        .chat-input:focus {
-            border-color: var(--primary-blue);
+        .mood-selector {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 15px;
         }
 
-        .send-button {
-            background-color: var(--primary-blue);
+        .mood-option {
+            flex: 1 0 calc(50% - 10px);
+            max-width: calc(50% - 10px);
+        }
+
+        .mood-btn {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid var(--light-color);
+            border-radius: var(--border-radius);
+            background: var(--white);
+            color: var(--text-color);
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-align: center;
+        }
+
+        .mood-btn:hover, .mood-btn.active {
+            border-color: var(--primary-color);
+            background: var(--light-color);
+            color: var(--primary-color);
+        }
+
+        .recommendation {
+            background: var(--light-color);
+            border-left: 4px solid var(--primary-color);
+            padding: 15px;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            margin-bottom: 15px;
+        }
+
+        .recommendation-title {
+            font-weight: 600;
+            color: var(--primary-color);
+            margin-bottom: 5px;
+        }
+
+        .recommendation-distance {
+            font-size: 12px;
+            color: var(--text-light);
+            margin-bottom: 10px;
+        }
+
+        .recommendation-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .umkm-tracker {
+            background: linear-gradient(135deg, #e8f0fe, #d2e3fc);
+            padding: 15px;
+            border-radius: var(--border-radius);
+            margin-bottom: 20px;
+        }
+
+        .tracker-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .tracker-title {
+            font-weight: 600;
+            color: var(--primary-color);
+        }
+
+        .tracker-value {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--dark-color);
+        }
+
+        .progress-container {
+            height: 10px;
+            background: var(--white);
+            border-radius: 5px;
+            margin-bottom: 10px;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+            border-radius: 5px;
+            transition: width 0.5s ease;
+        }
+
+        .tracker-label {
+            font-size: 12px;
+            color: var(--text-light);
+            text-align: center;
+        }
+
+        .badge {
+            display: inline-block;
+            background: var(--primary-color);
             color: var(--white);
-            border: none;
-            border-radius: 50%;
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            margin-top: 10px;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .loading {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100px;
+        }
+
+        .spinner {
             width: 40px;
             height: 40px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-left: 0.5rem;
-            cursor: pointer;
-            transition: background-color 0.3s;
-        }
-
-        .send-button:hover {
-            background-color: var(--dark-blue);
-        }
-
-        .typing-indicator {
-            display: flex;
-            padding: 0.75rem 1rem;
-            background-color: #e0e7ff;
-            border-radius: 1rem;
-            width: fit-content;
-            margin-bottom: 1rem;
-        }
-
-        .typing-dot {
-            width: 8px;
-            height: 8px;
-            background-color: var(--text-light);
+            border: 4px solid var(--light-color);
+            border-top: 4px solid var(--primary-color);
             border-radius: 50%;
-            margin: 0 2px;
-            animation: typingAnimation 1.4s infinite ease-in-out;
+            animation: spin 1s linear infinite;
         }
 
-        .typing-dot:nth-child(1) {
-            animation-delay: 0s;
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
         }
 
-        .typing-dot:nth-child(2) {
-            animation-delay: 0.2s;
+        footer {
+            text-align: center;
+            padding: 20px 0;
+            color: var(--text-light);
+            font-size: 12px;
         }
 
-        .typing-dot:nth-child(3) {
-            animation-delay: 0.4s;
+        /* Modal styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 100;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.4);
         }
 
-        @keyframes typingAnimation {
-            0%, 60%, 100% {
-                transform: translateY(0);
-                opacity: 0.6;
-            }
-            30% {
-                transform: translateY(-5px);
-                opacity: 1;
-            }
+        .modal-content {
+            background-color: var(--white);
+            margin: 15% auto;
+            padding: 20px;
+            border-radius: var(--border-radius);
+            width: 90%;
+            max-width: 500px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            position: relative;
         }
 
-        /* Scrollbar styling for chat container */
-        .chat-messages::-webkit-scrollbar {
-            width: 6px;
-        }
-        .chat-messages::-webkit-scrollbar-thumb {
-            background-color: #3b82f6;
-            border-radius: 3px;
-        }
-        .chat-messages::-webkit-scrollbar-track {
-            background: transparent;
+        .close {
+            color: var(--text-light);
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
         }
 
-        @media (max-width: 768px) {
-            header h1 {
-                font-size: 1.75rem;
-            }
-            
-            header p {
-                font-size: 0.9rem;
-            }
-            
-            .guide-card {
-                min-width: 280px;
-                padding: 1.25rem;
-            }
-            
-            .guide-avatar {
-                width: 60px;
-                height: 60px;
-            }
+        .close:hover {
+            color: var(--text-color);
         }
 
-        @media (max-width: 480px) {
+        /* Responsive adjustments */
+        @media (min-width: 768px) {
             .container {
-                padding: 0.75rem;
+                max-width: 750px;
+                margin: 0 auto;
             }
-            
-            header {
-                margin-bottom: 1.5rem;
-            }
-            
-            .guide-card {
-                min-width: 260px;
-            }
-            
-            .message {
-                max-width: 90%;
+
+            .mood-option {
+                flex: 1 0 calc(25% - 10px);
+                max-width: calc(25% - 10px);
             }
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <header id="mainHeader">
-            <h1>Meet Your Local Guardian</h1>
-            <p>Temukan panduan wisata healing Tourisme dengan AI-Guide yang akan membawa Anda menjelajahi keindahan alam dengan pengetahuan mendalam dan pendekatan personal.</p>
-        </header>
-
-        <div id="guideSelectionSection">
-            <div class="guide-list-container">
-                <div class="guide-list">
-                    <!-- Gunung Bromo -->
-                    <div class="guide-card" data-guide-id="bromo">
-                        <div class="guide-header">
-                            <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSVD1VOY9Jq3fC2HkZm8TsoVQCU3Wg_7-c1rQ&s" alt="Pak Joko" class="guide-avatar">
-                            <div class="guide-info">
-                                <h3 class="guide-name">Pak Joko</h3>
-                                <div class="guide-location">
-                                    <i class="fas fa-map-marker-alt"></i>
-                                    <span>Gunung Bromo</span>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="divider"></div>
-                        <div class="specialization-section">
-                            <div class="specialization-title">
-                                <i class="fas fa-user-cog"></i>
-                                <h3>Kepribadian dan Keahlian</h3>
-                            </div>
-                            <div class="specialization-tags">
-                                <span class="specialization-tag">Healing Alam</span>
-                                <span class="specialization-tag">Culture Healing</span>
-                                <span class="specialization-tag">Adat Suku Tengger</span>
-                            </div>
-                        </div>
-                        <button class="chat-btn" onclick="selectGuide('bromo')">
-                            <i class="fas fa-comment-alt"></i> Chat dengan Pak Joko
-                        </button>
-                    </div>
-
-                    <!-- Air Terjun Madakaripura -->
-                    <div class="guide-card" data-guide-id="madakaripura">
-                        <div class="guide-header">
-                            <img src="https://static.vecteezy.com/system/resources/previews/002/002/297/non_2x/beautiful-woman-avatar-character-icon-free-vector.jpg" alt="Mbak Siti" class="guide-avatar">
-                            <div class="guide-info">
-                                <h3 class="guide-name">Mbak Siti</h3>
-                                <div class="guide-location">
-                                    <i class="fas fa-map-marker-alt"></i>
-                                    <span>Air Terjun Madakaripura</span>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="divider"></div>
-                        <div class="specialization-section">
-                            <div class="specialization-title">
-                                <i class="fas fa-user-cog"></i>
-                                <h3>Kepribadian dan Keahlian</h3>
-                            </div>
-                            <div class="specialization-tags">
-                                <span class="specialization-tag">Spiritual</span>
-                                <span class="specialization-tag">Sejarah</span>
-                                <span class="specialization-tag">Meditasi</span>
-                            </div>
-                        </div>
-                        <button class="chat-btn" onclick="selectGuide('madakaripura')">
-                            <i class="fas fa-comment-alt"></i> Chat dengan Mbak Siti
-                        </button>
-                    </div>
-
-                    <!-- Pulau Gili Ketapang -->
-                    <div class="guide-card" data-guide-id="gili">
-                        <div class="guide-header">
-                            <img src="https://cdn-icons-png.freepik.com/512/5626/5626490.png" alt="Mas Bayu" class="guide-avatar">
-                            <div class="guide-info">
-                                <h3 class="guide-name">Mas Bayu</h3>
-                                <div class="guide-location">
-                                    <i class="fas fa-map-marker-alt"></i>
-                                    <span>Pulau Gili Ketapang</span>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="divider"></div>
-                        <div class="specialization-section">
-                            <div class="specialization-title">
-                                <i class="fas fa-user-cog"></i>
-                                <h3>Kepribadian dan Keahlian</h3>
-                            </div>
-                            <div class="specialization-tags">
-                                <span class="specialization-tag">Healing Pantai</span>
-                                <span class="specialization-tag">Snorkeling</span>
-                                <span class="specialization-tag">Relaksasi</span>
-                            </div>
-                        </div>
-                        <button class="chat-btn" onclick="selectGuide('gili')">
-                            <i class="fas fa-comment-alt"></i> Chat dengan Mas Bayu
-                        </button>
-                    </div>
-
-                    <!-- Pantai Duta -->
-                    <div class="guide-card" data-guide-id="duta">
-                        <div class="guide-header">
-                            <img src="https://cdn2.iconfinder.com/data/icons/dompicon-tint-female-profession/256/tour-guide-profession-female-avatar-512.png" alt="Mbak Rani" class="guide-avatar">
-                            <div class="guide-info">
-                                <h3 class="guide-name">Mbak Rani</h3>
-                                <div class="guide-location">
-                                    <i class="fas fa-map-marker-alt"></i>
-                                    <span>Pantai Duta</span>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="divider"></div>
-                        <div class="specialization-section">
-                            <div class="specialization-title">
-                                <i class="fas fa-user-cog"></i>
-                                <h3>Kepribadian dan Keahlian</h3>
-                            </div>
-                            <div class="specialization-tags">
-                                <span class="specialization-tag">Healing Pantai</span>
-                                <span class="specialization-tag">Ekosistem</span>
-                                <span class="specialization-tag">Relaksasi</span>
-                            </div>
-                        </div>
-                        <button class="chat-btn" onclick="selectGuide('duta')">
-                            <i class="fas fa-comment-alt"></i> Chat dengan Mbak Rani
-                        </button>
-                    </div>
-
-                    <!-- Gunung Argopuro -->
-                    <div class="guide-card" data-guide-id="argopuro">
-                        <div class="guide-header">
-                            <img src="https://cdn0.iconfinder.com/data/icons/travel-and-vacation-69/64/Tour_Guide-512.png" alt="Pak Heru" class="guide-avatar">
-                            <div class="guide-info">
-                                <h3 class="guide-name">Pak Heru</h3>
-                                <div class="guide-location">
-                                    <i class="fas fa-map-marker-alt"></i>
-                                    <span>Gunung Argopuro</span>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="divider"></div>
-                        <div class="specialization-section">
-                            <div class="specialization-title">
-                                <i class="fas fa-user-cog"></i>
-                                <h3>Kepribadian dan Keahlian</h3>
-                            </div>
-                            <div class="specialization-tags">
-                                <span class="specialization-tag">Forest Bathing</span>
-                                <span class="specialization-tag">Hiking</span>
-                                <span class="specialization-tag">Meditasi Alam</span>
-                            </div>
-                        </div>
-                        <button class="chat-btn" onclick="selectGuide('argopuro')">
-                            <i class="fas fa-comment-alt"></i> Chat dengan Pak Heru
-                        </button>
-                    </div>
-
-                    <!-- Candi Jabung -->
-                    <div class="guide-card" data-guide-id="jabung">
-                        <div class="guide-header">
-                            <img src="https://img.freepik.com/premium-vector/safari-guide-icon-clipart-avatar-isolated-vector-illustration_955346-380.jpg" alt="Mas Ardi" class="guide-avatar">
-                            <div class="guide-info">
-                                <h3 class="guide-name">Mas Ardi</h3>
-                                <div class="guide-location">
-                                    <i class="fas fa-map-marker-alt"></i>
-                                    <span>Candi Jabung</span>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="divider"></div>
-                        <div class="specialization-section">
-                            <div class="specialization-title">
-                                <i class="fas fa-user-cog"></i>
-                                <h3>Kepribadian dan Keahlian</h3>
-                            </div>
-                            <div class="specialization-tags">
-                                <span class="specialization-tag">Sejarah</span>
-                                <span class="specialization-tag">Budaya</span>
-                                <span class="specialization-tag">Arkeologi</span>
-                            </div>
-                        </div>
-                        <button class="chat-btn" onclick="selectGuide('jabung')">
-                            <i class="fas fa-comment-alt"></i> Chat dengan Mas Ardi
-                        </button>
-                    </div>
-
-                    <!-- Air Panas Tiris -->
-                    <div class="guide-card" data-guide-id="tiris">
-                        <div class="guide-header">
-                            <img src="https://static.vecteezy.com/system/resources/previews/026/070/661/non_2x/tour-guide-icon-design-free-vector.jpg" alt="Pak Agus" class="guide-avatar">
-                            <div class="guide-info">
-                                <h3 class="guide-name">Pak Agus</h3>
-                                <div class="guide-location">
-                                    <i class="fas fa-map-marker-alt"></i>
-                                    <span>Air Panas Tiris</span>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="divider"></div>
-                        <div class="specialization-section">
-                            <div class="specialization-title">
-                                <i class="fas fa-user-cog"></i>
-                                <h3>Kepribadian dan Keahlian</h3>
-                            </div>
-                            <div class="specialization-tags">
-                                <span class="specialization-tag">Terapi Air Panas</span>
-                                <span class="specialization-tag">Relaksasi</span>
-                                <span class="specialization-tag">Kesehatan</span>
-                            </div>
-                        </div>
-                        <button class="chat-btn" onclick="selectGuide('tiris')">
-                            <i class="fas fa-comment-alt"></i> Chat dengan Pak Agus
-                        </button>
-                    </div>
-
-                    <!-- Candi Kedaton -->
-                    <div class="guide-card" data-guide-id="kedaton">
-                        <div class="guide-header">
-                            <img src="https://st4.depositphotos.com/1007566/24641/v/450/depositphotos_246419944-stock-illustration-woman-worker-of-zoo-character.jpg" alt="Bu Eli" class="guide-avatar">
-                            <div class="guide-info">
-                                <h3 class="guide-name">Bu Eli</h3>
-                                <div class="guide-location">
-                                    <i class="fas fa-map-marker-alt"></i>
-                                    <span>Candi Kedaton</span>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="divider"></div>
-                        <div class="specialization-section">
-                            <div class="specialization-title">
-                                <i class="fas fa-user-cog"></i>
-                                <h3>Kepribadian dan Keahlian</h3>
-                            </div>
-                            <div class="specialization-tags">
-                                <span class="specialization-tag">Meditasi</span>
-                                <span class="specialization-tag">Sejarah</span>
-                                <span class="specialization-tag">Spiritual</span>
-                            </div>
-                        </div>
-                        <button class="chat-btn" onclick="selectGuide('kedaton')">
-                            <i class="fas fa-comment-alt"></i> Chat dengan Bu Eli
-                        </button>
-                    </div>
-
-                    <!-- Danau Taman Hidup -->
-                    <div class="guide-card" data-guide-id="tamanhidup">
-                        <div class="guide-header">
-                            <img src="https://www.shutterstock.com/image-vector/tour-guide-standing-holding-paper-260nw-2354186187.jpg" alt="Pak Adi" class="guide-avatar">
-                            <div class="guide-info">
-                                <h3 class="guide-name">Pak Adi</h3>
-                                <div class="guide-location">
-                                    <i class="fas fa-map-marker-alt"></i>
-                                    <span>Danau Taman Hidup</span>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="divider"></div>
-                        <div class="specialization-section">
-                            <div class="specialization-title">
-                                <i class="fas fa-user-cog"></i>
-                                <h3>Kepribadian dan Keahlian</h3>
-                            </div>
-                            <div class="specialization-tags">
-                                <span class="specialization-tag">Bird Watching</span>
-                                <span class="specialization-tag">Terapi Suara Alam</span>
-                                <span class="specialization-tag">Relaksasi</span>
-                            </div>
-                        </div>
-                        <button class="chat-btn" onclick="selectGuide('tamanhidup')">
-                            <i class="fas fa-comment-alt"></i> Chat dengan Pak Adi
-                        </button>
-                    </div>
-                </div>
-            </div>
+    <header>
+        <div class="container">
+            <div class="logo">Healing Culinary Explorer</div>
+            <div class="tagline">Nikmati Kuliner Khas, Sembuhkan Jiwa & Bantu Ekonomi Lokal</div>
         </div>
+    </header>
 
-        <div id="chatSection">
-            <div class="chat-header">
-                <button class="back-button" onclick="backToSelection()">
-                    <i class="fas fa-arrow-left"></i>
+    <div class="main-content">
+        <div class="container">
+            <div class="card">
+                <div class="card-title">
+                    <i class="fas fa-map-marker-alt"></i> Lokasi Anda
+                </div>
+                <div class="map-container">
+                    <div id="map"></div>
+                </div>
+                <button id="locate-btn" class="btn btn-block">
+                    <i class="fas fa-location-arrow"></i> Gunakan Lokasi Saya
                 </button>
-                <img id="guideChatAvatar" src="" alt="Avatar Panduan" class="guide-avatar-chat">
-                <div class="guide-info-chat">
-                    <h3 id="guideChatName"></h3>
-                    <p id="guideChatSpecialization"></p>
+            </div>
+
+            <div class="card">
+                <div class="card-title">
+                    <i class="fas fa-heart"></i> Healing Culinary Mood
+                </div>
+                <p>Bagaimana perasaan Anda hari ini? Kami akan merekomendasikan kuliner khas Probolinggo yang sesuai.</p>
+                
+                <div class="mood-selector">
+                    <div class="mood-option">
+                        <button class="mood-btn" data-mood="lelah">
+                            <i class="fas fa-tired"></i> Lelah
+                        </button>
+                    </div>
+                    <div class="mood-option">
+                        <button class="mood-btn" data-mood="sedih">
+                            <i class="fas fa-sad-tear"></i> Sedih
+                        </button>
+                    </div>
+                    <div class="mood-option">
+                        <button class="mood-btn" data-mood="gembira">
+                            <i class="fas fa-laugh-beam"></i> Gembira
+                        </button>
+                    </div>
+                    <div class="mood-option">
+                        <button class="mood-btn" data-mood="nostalgia">
+                            <i class="fas fa-history"></i> Nostalgia
+                        </button>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="preference">Preferensi Rasa:</label>
+                    <select id="preference">
+                        <option value="">Semua Rasa</option>
+                        <option value="manis">Manis</option>
+                        <option value="pedas">Pedas</option>
+                        <option value="gurih">Gurih</option>
+                        <option value="hangat">Hangat</option>
+                    </select>
+                </div>
+
+                <button id="find-food-btn" class="btn btn-block">
+                    <i class="fas fa-utensils"></i> Temukan Makanan Healing
+                </button>
+            </div>
+
+            <div id="recommendations-container" class="hidden">
+                <div class="card">
+                    <div class="card-title">
+                        <i class="fas fa-lightbulb"></i> Rekomendasi untuk Anda
+                    </div>
+                    <div id="recommendations-list"></div>
                 </div>
             </div>
-            
-            <div class="chat-messages" id="chatMessages">
-                <!-- Messages will appear here -->
-            </div>
-            
-            <div class="chat-input-container">
-                <input type="text" class="chat-input" id="userInput" placeholder="Tulis pertanyaan Anda..." onkeypress="handleKeyPress(event)">
-                <button class="send-button" onclick="sendMessage()">
-                    <i class="fas fa-paper-plane"></i>
+
+            <div class="card">
+                <div class="card-title">
+                    <i class="fas fa-hands-helping"></i> Dukung UMKM Lokal
+                </div>
+                <div class="umkm-tracker">
+                    <div class="tracker-header">
+                        <div class="tracker-title">Total Dana Mengalir ke Ekonomi Lokal</div>
+                        <div class="tracker-value" id="total-amount">Rp 0</div>
+                    </div>
+                    <div class="progress-container">
+                        <div class="progress-bar" id="progress-bar" style="width: 0%"></div>
+                    </div>
+                    <div class="tracker-label">Bantu kami mencapai target Rp 10.000.000</div>
+                </div>
+                <button id="add-transaction-btn" class="btn btn-secondary btn-block">
+                    <i class="fas fa-plus"></i> Tambahkan Transaksi
                 </button>
+                <div id="badge-container" class="hidden">
+                    <div class="badge">
+                        <i class="fas fa-medal"></i> Pahlawan Rasa Lokal
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 
+    <!-- Modal for Transaction -->
+    <div id="transaction-modal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h3>Tambah Transaksi UMKM</h3>
+            <form id="transaction-form">
+                <div class="form-group">
+                    <label for="umkm-name">Nama UMKM:</label>
+                    <select id="umkm-name" required>
+                        <option value="">Pilih UMKM</option>
+                        <!-- Options will be loaded from Google Sheets -->
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="food-name">Nama Makanan:</label>
+                    <input type="text" id="food-name" required placeholder="Contoh: Sate Gule Kambing">
+                </div>
+                <div class="form-group">
+                    <label for="amount">Total Belanja (Rp):</label>
+                    <input type="number" id="amount" required placeholder="100000">
+                </div>
+                <button type="submit" class="btn btn-block">Simpan Transaksi</button>
+            </form>
+        </div>
+    </div>
+
+    <footer>
+        <div class="container">
+            Healing Culinary Explorer © 2023 - Dukung Ekonomi Lokal Probolinggo
+        </div>
+    </footer>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script>
-        // Konfigurasi Gemini API
-        const GEMINI_API_KEY = "AIzaSyC-FAUZBpiRz3Jgz-PbZdZ62vMI28emi9c";
-        const GEMINI_API_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`;
+        // Google Sheets configuration (without API key)
+        const SHEET_ID = '1FzcrwbZFx6X-IKJGbYa1bBn4EkrxszsE_rqKfIbbZk0';
+        const SHEET_NAME = 'Sheet2';
+        const CSV_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv&sheet=${SHEET_NAME}`;
 
-        // Data panduan
-        const guides = {
-            bromo: {
-                name: "Pak Joko",
-                avatar: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSVD1VOY9Jq3fC2HkZm8TsoVQCU3Wg_7-c1rQ&s",
-                specialization: "Panduan Healing Gunung Bromo",
-                destination: "Gunung Bromo",
-                personality: "Ramah, berpengalaman,Profesional memandu di Bromo, ahli semua tentang bromo terkini.",
-                voice: "male-1",
-                prompt: "Anda adalah Pak Joko, pemandu wisata Gunung Bromo dan Anda ahli dalam semua tentang bromo dengan pengetahuan terkini. Gunakan bahasa yang informatif dan menarik.Tanpa sapaan selamat pagi/siang/sore/malam . Fokuskan pada aspek healing tourism dari pengalaman di Bromo dan Adat Suku Tengger sebagai Culture-Healing Tourism yang Kultur tersebut terdiri atas lunga atau berkebun, gegeni atau berkumpul di dapur atau tungku perapian, sanja atau bertamu menjelang senja, memidang atau berjemur diri, megeng atau meditasi, dan dedolan atau berkelana namun jika bertanya secara detail seperti rekomendasi jam maka anda akan mengarahkan ke fitur GoProlink yakni Healing Journeys. Jika bertanya selain gunung Bromo maka anda akan menjawab dengan mengarahkan pengguna ke tour guide yang diinginkan pengguna."
-            },
-            madakaripura: {
-                name: "Mbak Siti",
-                avatar: "https://static.vecteezy.com/system/resources/previews/002/002/297/non_2x/beautiful-woman-avatar-character-icon-free-vector.jpg",
-                specialization: "Ahli Spiritual Air Terjun Madakaripura dan Sejarah Madakaripura",
-                destination: "Air Terjun Madakaripura",
-                personality: "Spiritual, memahami mitos dan energi air terjun, panduan meditasi di bawah air terjun.",
-                voice: "female-1",
-                prompt: "Anda adalah Mbak Siti, ahli tourguide Air Terjun Madakaripura. Anda memahami mitos dan energi air terjun. Gunakan bahasa yang informatif dan menarik dengan emoticon. Jelaskan tentang: 1) Mitos dan legenda air terjun 2) Meditasi di bawah air terjun 3) Kekuatan penyembuhan air dengan suara air 4) Ritual lokal yang terkait dengan air terjun jika ada 5) Sejarah Gajah Mada dengan Madakaripura.Jika bertanya selain Air Terjun Madakaripura maka anda akan menjawab dengan mengarahkan pengguna ke tour guide yang diinginkan pengguna."
-            },
-            gili: {
-                name: "Mas Bayu",
-                avatar: "https://cdn-icons-png.freepik.com/512/5626/5626490.png",
-                specialization: "Panduan Healing Pulau Gili Ketapang",
-                destination: "Pulau Gili Ketapang",
-                personality: "Santai tapi profesional, ahli terapi suara ombak dan snorkeling meditatif.",
-                voice: "male-2",
-                prompt: "Anda adalah Mas Bayu, pemandu Pulau Gili Ketapang yang ahli dalam terapi suara ombak dan snorkeling meditatif. Gunakan bahasa yang santai tapi profesional. Fokus pada: 1) Terapi suara ombak 2) Snorkeling meditatif 3) Kehidupan laut yang menenangkan 4) Spot-spot relaksasi di pulau 5) aktivitas Snorkeling dan Diving,Naik Wahana Permainan Air,Keliling Pulau,Pantai Gua Kucing,Petilasan Syech Maulana Ishaq,Belanja Oleh-oleh dan Ikan namun jika bertanya lebih detail bisa gunakan fitur healing journey di Goprolink 7) cara ke gili ketapang yakni Gili Ketapang berada 8 km di utara pantai Probolinggo. Untuk pergi ke sana, kamu harus menyeberang dari Pelabuhan Tanjung Tembaga di Kota Probolinggo. Perjalanan naik kapal membutuhkan waktu sekitar 30 menit.Jika bertanya selain Pulau Gili Ketapang maka anda akan menjawab dengan mengarahkan pengguna ke tour guide yang diinginkan pengguna."
-            },
-            duta: {
-                name: "Mbak Rani",
-                avatar: "https://cdn2.iconfinder.com/data/icons/dompicon-tint-female-profession/256/tour-guide-profession-female-avatar-512.png",
-                specialization: "Ahli Pantai Duta di Dusun Gilin, Randutatah, Kec. Paiton, Kabupaten Probolinggo, Jawa Timur ",
-                destination: "Pantai Duta",
-                personality: "Cerewet tapi informatif, tahu semua spot menarik dan teknik relaksasi pantai.",
-                voice: "female-2",
-                prompt: "Anda adalah Mbak Rani, pakar ekosistem dan tourguide professional Pantai Duta dengan alamat Dusun Gilin, Randutatah, Kec. Paiton, Kabupaten Probolinggo, Jawa Timur (Link Alamat https://maps.app.goo.gl/riSyHNUexKitNiKd8) yang sangat informatif. Anda tahu semua spot menarik dan teknik relaksasi pantai. Gunakan bahasa yang detail dan informatif. Jelaskan tentang: 1) Ekosistem pantai yang unik 2) Teknik relaksasi dengan suara ombak 3) Spot-spot terbaik untuk healing 4) Waktu ideal untuk mengunjungi.Jika bertanya selain pantai duta maka anda akan menjawab dengan mengarahkan pengguna ke tour guide yang diinginkan pengguna."
-            },
-            argopuro: {
-                name: "Pak Heru",
-                avatar: "https://cdn0.iconfinder.com/data/icons/travel-and-vacation-69/64/Tour_Guide-512.png",
-                specialization: "Panduan Forest Bathing Gunung Argopuro",
-                destination: "Gunung Argopuro",
-                personality: "Sabar dan sangat mengenal hutan, ahli dalam terapi shinrin-yoku (forest bathing).",
-                voice: "male-3",
-                prompt: "Anda adalah Pak Heru, pemandu Gunung Argopuro yang ahli dalam terapi shinrin-yoku (forest bathing). Gunakan bahasa yang sabar dan mendalam. Fokus pada: 1) Teknik forest bathing 2) Keunikan ekosistem hutan Argopuro 3) Meditasi di alam 4) Manfaat kesehatan dari menghabiskan waktu di hutan.Jika bertanya selain gunung argupuro maka anda akan menjawab dengan mengarahkan pengguna ke tour guide yang diinginkan pengguna."
-            },
-            jabung: {
-                name: "Mas Ardi",
-                avatar: "https://img.freepik.com/premium-vector/safari-guide-icon-clipart-avatar-isolated-vector-illustration_955346-380.jpg",
-                specialization: "Pemandu Candi Jabung dan ahli Sejarah Candi Jabung",
-                destination: "Candi Jabung",
-                personality: "Misterius tapi berwawasan, menggabungkan sejarah dengan praktik spiritual kuno dan arkeologi.",
-                voice: "male-3",
-                prompt: "Anda adalah Mas ardi yang merupakan pemandu wisata professional Candi Jabung dan memiliki wawasan luas tentang arkeologi,sejarah Candi Jabung yang berlokasi di Dusun Candi, Jabung Candi, Kec. Paiton, Kabupaten Probolinggo, Jawa Timur yang dibangun pada masa Raja Hayam wuruk berdasarkan sumber sejarah kitab Negarakertagama. Anda memiliki kepribadian jujur, tidak egois, mudah bergaul, mudah menerima masukan, memiliki sudut pandang yang luas dan menghargai orang lain . Berikan jawaban yang jelas, akurat, dan mudah dipahami dalam bahasa Indonesia. Fokus pada penjelasan tentang Sejarah Candi jabung, Spot foto menarik, aktivitas wisata yang bisa membantu Healing Tourism atau Culture Healing Tourism pengguna. Jika bertanya selain candi jabung maka anda akan menjawab dengan mengarahkan pengguna ke tour guide yang diinginkan pengguna"
-            },
-            tiris: {
-                name: "Pak Agus",
-                avatar: "https://static.vecteezy.com/system/resources/previews/026/070/661/non_2x/tour-guide-icon-design-free-vector.jpg",
-                specialization: "Ahli Terapi Air Panas Tiris",
-                destination: "Air Panas Tiris",
-                personality: "Hangat seperti air panas yang dipandunya, ahli terapi panas dan mineral.",
-                voice: "male-1",
-                prompt: "Anda adalah Pak Agus, ahli terapi air panas Tiris. Anda memiliki pengetahuan mendalam tentang manfaat terapi air panas untuk kesehatan dan relaksasi. Gunakan bahasa yang hangat dan informatif. Fokus pada: 1) Manfaat kesehatan air panas 2) Teknik relaksasi di air panas 3) Kandungan mineral air Tiris 4) Waktu terbaik untuk berendam. Jika bertanya selain Air Panas Tiris maka anda akan mengarahkan pengguna ke tour guide yang sesuai."
-            },
-            kedaton: {
-                name: "Bu Eli",
-                avatar: "https://st4.depositphotos.com/1007566/24641/v/450/depositphotos_246419944-stock-illustration-woman-worker-of-zoo-character.jpg",
-                specialization: "Pemandu Meditasi Candi Kedaton",
-                destination: "Candi Kedaton",
-                personality: "Tenang dan bijaksana, memandu meditasi dan kontemplasi di situs kuno.",
-                voice: "female-1",
-                prompt: "Anda adalah Bu Eli, pemandu meditasi Candi Kedaton yang tenang dan bijaksana. Anda memandu meditasi dan kontemplasi di situs kuno. Gunakan bahasa yang tenang dan penuh kebijaksanaan. Jelaskan tentang: 1) Teknik meditasi di situs kuno 2) Sejarah spiritual candi 3) Energi khusus tempat ini 4) Latihan kontemplasi yang bisa dilakukan pengunjung."
-            },
-            tamanhidup: {
-                name: "Pak Adi",
-                avatar: "https://www.shutterstock.com/image-vector/tour-guide-standing-holding-paper-260nw-2354186187.jpg",
-                specialization: "Pakar Terapi Burung Danau Taman Hidup",
-                destination: "Danau Taman Hidup",
-                personality: "Observatif dan detail, ahli dalam terapi suara alam dan bird watching.",
-                voice: "male-2",
-                prompt: "Anda adalah Pak Adi, pakar terapi burung Danau Taman Hidup yang observatif dan detail. Anda ahli dalam terapi suara alam dan bird watching. Gunakan bahasa yang detail dan penuh perhatian. Fokus pada: 1) Terapi suara alam 2) Teknik bird watching untuk relaksasi 3) Keunikan ekosistem danau 4) Aktivitas healing yang bisa dilakukan di sekitar danau."
-            }
-        };
+        // Initialize map
+        let map;
+        let userMarker;
+        let userLocation = null;
+        let umkmData = [];
+        let totalAmount = 0;
 
-        let currentGuide = null;
-        let currentMessages = [];
-        let speechSynthesis = window.speechSynthesis;
-        let currentUtterance = null;
+        // DOM elements
+        const locateBtn = document.getElementById('locate-btn');
+        const findFoodBtn = document.getElementById('find-food-btn');
+        const moodBtns = document.querySelectorAll('.mood-btn');
+        const preferenceSelect = document.getElementById('preference');
+        const recommendationsContainer = document.getElementById('recommendations-container');
+        const recommendationsList = document.getElementById('recommendations-list');
+        const totalAmountElement = document.getElementById('total-amount');
+        const progressBar = document.getElementById('progress-bar');
+        const addTransactionBtn = document.getElementById('add-transaction-btn');
+        const badgeContainer = document.getElementById('badge-container');
+        const transactionModal = document.getElementById('transaction-modal');
+        const closeModal = document.querySelector('.close');
+        const transactionForm = document.getElementById('transaction-form');
+        const umkmNameSelect = document.getElementById('umkm-name');
 
-        // Pilih panduan
-        function selectGuide(guideId) {
-            currentGuide = guides[guideId];
-            
-            // Update UI chat
-            document.getElementById('guideChatAvatar').src = currentGuide.avatar;
-            document.getElementById('guideChatName').textContent = currentGuide.name + " - " + currentGuide.destination;
-            document.getElementById('guideChatSpecialization').textContent = currentGuide.specialization;
-            
-            // Sembunyikan seleksi panduan dan header, tampilkan chat
-            document.getElementById('guideSelectionSection').style.display = 'none';
-            document.getElementById('mainHeader').style.display = 'none';
-            document.getElementById('chatSection').style.display = 'flex';
-            document.getElementById('chatMessages').innerHTML = '';
-            
-            // Tambahkan pesan pembuka dari AI
-            addAIMessage(`Halo! Saya ${currentGuide.name}, Tourguide ${currentGuide.destination} Anda. Saya memiliki pengalaman ${currentGuide.personality} Bagaimana saya bisa membantu perjalanan healing Anda hari ini?`);
-            
-            // Scroll ke bawah
-            scrollChatToBottom();
+        // Initialize the application
+        function init() {
+            initMap();
+            setupEventListeners();
+            loadUMKMData();
         }
 
-        // Kembali ke pemilihan panduan
-        function backToSelection() {
-            document.getElementById('guideSelectionSection').style.display = 'block';
-            document.getElementById('mainHeader').style.display = 'block';
-            document.getElementById('chatSection').style.display = 'none';
-            currentGuide = null;
-            currentMessages = [];
-            document.getElementById('chatMessages').innerHTML = '';
-            stopPlayback();
+        // Initialize Leaflet map
+        function initMap() {
+            map = L.map('map').setView([-7.7545, 113.2159], 13); // Default to Probolinggo coordinates
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+            }).addTo(map);
         }
 
-        // Kirim pesan
-        async function sendMessage() {
-            const userInput = document.getElementById('userInput');
-            const message = userInput.value.trim();
+        // Set up event listeners
+        function setupEventListeners() {
+            locateBtn.addEventListener('click', locateUser);
+            findFoodBtn.addEventListener('click', findHealingFood);
             
-            if (message === '') return;
-            
-            addUserMessage(message);
-            userInput.value = '';
-            
-            // Tampilkan indikator mengetik
-            showTypingIndicator();
-            
-            try {
-                // Generate respons AI
-                const aiResponse = await generateAIResponse(message);
-                
-                // Hapus indikator mengetik
-                hideTypingIndicator();
-                
-                // Tambahkan respons AI ke chat
-                addAIMessage(aiResponse);
-            } catch (error) {
-                console.error("Error:", error);
-                hideTypingIndicator();
-                addAIMessage("Maaf, terjadi kesalahan saat memproses permintaan Anda. Silakan coba lagi.");
-            }
-        }
-
-        // Handle tekan enter
-        function handleKeyPress(event) {
-            if (event.key === 'Enter') {
-                sendMessage();
-            }
-        }
-
-        // Tambahkan pesan pengguna
-        function addUserMessage(message) {
-            const chatMessages = document.getElementById('chatMessages');
-            const messageElement = document.createElement('div');
-            messageElement.className = 'message user-message';
-            messageElement.textContent = message;
-            chatMessages.appendChild(messageElement);
-            
-            // Simpan pesan
-            currentMessages.push({
-                sender: 'user',
-                content: message
+            moodBtns.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    moodBtns.forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+                });
             });
-            
-            scrollChatToBottom();
-        }
 
-        // Tambahkan pesan AI
-        function addAIMessage(message) {
-            const chatMessages = document.getElementById('chatMessages');
-            
-            // Buat container pesan
-            const messageContainer = document.createElement('div');
-            messageContainer.className = 'message ai-message';
-            
-            // Tambahkan teks pesan
-            const messageText = document.createElement('span');
-            messageText.textContent = message;
-            messageContainer.appendChild(messageText);
-            
-            // Tambahkan tombol audio jika bukan pesan error
-            if (!message.includes("Maaf, terjadi kesalahan")) {
-                const audioButton = document.createElement('button');
-                audioButton.className = 'audio-button';
-                audioButton.innerHTML = '<i class="fas fa-volume-up"></i>';
-                audioButton.onclick = () => playResponse();
-                messageContainer.appendChild(audioButton);
-            }
-            
-            chatMessages.appendChild(messageContainer);
-            
-            // Simpan pesan
-            currentMessages.push({
-                sender: 'ai',
-                content: message
+            addTransactionBtn.addEventListener('click', () => {
+                transactionModal.style.display = 'block';
             });
+
+            closeModal.addEventListener('click', () => {
+                transactionModal.style.display = 'none';
+            });
+
+            window.addEventListener('click', (event) => {
+                if (event.target === transactionModal) {
+                    transactionModal.style.display = 'none';
+                }
+            });
+
+            transactionForm.addEventListener('submit', saveTransaction);
+        }
+
+        // Get user location
+        function locateUser() {
+            locateBtn.disabled = true;
+            locateBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Mendeteksi Lokasi...';
             
-            scrollChatToBottom();
-        }
-
-        // Scroll chat ke bawah
-        function scrollChatToBottom() {
-            const chatMessages = document.getElementById('chatMessages');
-            chatMessages.scrollTop = chatMessages.scrollHeight;
-        }
-
-        // Tampilkan indikator mengetik
-        function showTypingIndicator() {
-            const chatMessages = document.getElementById('chatMessages');
-            const typingElement = document.createElement('div');
-            typingElement.className = 'typing-indicator';
-            typingElement.id = 'typingIndicator';
-            typingElement.innerHTML = `
-                <div class="typing-dot"></div>
-                <div class="typing-dot"></div>
-                <div class="typing-dot"></div>
-            `;
-            chatMessages.appendChild(typingElement);
-            scrollChatToBottom();
-        }
-
-        // Sembunyikan indikator mengetik
-        function hideTypingIndicator() {
-            const typingElement = document.getElementById('typingIndicator');
-            if (typingElement) {
-                typingElement.remove();
-            }
-        }
-
-        // Generate respons AI menggunakan Gemini API
-        async function generateAIResponse(userMessage) {
-            try {
-                // Format prompt untuk Gemini API
-                const prompt = {
-                    contents: [
-                        {
-                            parts: [
-                                { text: currentGuide.prompt },
-                                { text: `Konteks: Anda sedang berbicara dengan pengunjung ${currentGuide.destination}. Anda memiliki kepribadian jujur, tidak egois, mudah bergaul, mudah menerima masukan, memiliki sudut pandang yang luas dan menghargai orang lain . Berikan jawaban yang jelas, akurat, dan mudah dipahami dalam bahasa Indonesia. Pertanyaan pengguna: ${userMessage}` }
-                            ]
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(
+                    position => {
+                        const { latitude, longitude } = position.coords;
+                        userLocation = { lat: latitude, lng: longitude };
+                        
+                        // Update map view
+                        map.setView([latitude, longitude], 15);
+                        
+                        // Add or update user marker
+                        if (userMarker) {
+                            userMarker.setLatLng([latitude, longitude]);
+                        } else {
+                            userMarker = L.marker([latitude, longitude], {
+                                icon: L.divIcon({
+                                    className: 'user-marker',
+                                    html: '<i class="fas fa-user" style="color: #1a73e8; font-size: 24px;"></i>',
+                                    iconSize: [24, 24]
+                                })
+                            }).addTo(map);
                         }
-                    ]
-                };
-                
-                // Kirim request ke Gemini API
-                const response = await fetch(GEMINI_API_URL, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
+                        
+                        locateBtn.innerHTML = '<i class="fas fa-check-circle"></i> Lokasi Ditemukan';
+                        setTimeout(() => {
+                            locateBtn.disabled = false;
+                            locateBtn.innerHTML = '<i class="fas fa-location-arrow"></i> Gunakan Lokasi Saya';
+                        }, 2000);
                     },
-                    body: JSON.stringify(prompt)
-                });
+                    error => {
+                        console.error('Error getting location:', error);
+                        alert('Tidak dapat mengakses lokasi Anda. Pastikan izin lokasi telah diberikan.');
+                        locateBtn.disabled = false;
+                        locateBtn.innerHTML = '<i class="fas fa-location-arrow"></i> Gunakan Lokasi Saya';
+                    }
+                );
+            } else {
+                alert('Browser Anda tidak mendukung geolokasi.');
+                locateBtn.disabled = false;
+                locateBtn.innerHTML = '<i class="fas fa-location-arrow"></i> Gunakan Lokasi Saya';
+            }
+        }
+
+        // Load UMKM data from Google Sheets as CSV
+        async function loadUMKMData() {
+            try {
+                const response = await fetch(CSV_URL);
+                const csvData = await response.text();
+                const rows = parseCSV(csvData);
                 
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                }
-                
-                const data = await response.json();
-                
-                // Ekstrak teks respons
-                if (data.candidates && data.candidates[0].content.parts[0].text) {
-                    return data.candidates[0].content.parts[0].text;
-                } else {
-                    throw new Error("Format respons tidak valid");
+                if (rows.length > 1) {
+                    // Skip header row
+                    for (let i = 1; i < rows.length; i++) {
+                        const row = rows[i];
+                        if (row.length >= 8) { // Pastikan ada minimal 8 kolom
+                            umkmData.push({
+                                name: row[0] || '',
+                                address: row[1] || '',
+                                description: row[2] || '',
+                                photo: row[3] || '',
+                                lat: parseFloat(row[4]) || 0,
+                                lng: parseFloat(row[5]) || 0,
+                                products: row[6] || '',
+                                whatsapp: row[7] || '',
+                                healingEffect: row[8] || '' // Kolom tambahan efek healing
+                            });
+                        }
+                    }
+                    
+                    // Populate UMKM dropdown
+                    populateUMKMDropdown();
+                    
+                    // Add UMKM markers to map
+                    addUMMarkers();
                 }
             } catch (error) {
-                console.error("Error calling Gemini API:", error);
-                throw error;
+                console.error('Error loading UMKM data:', error);
+                // Fallback data in case API fails
+                loadFallbackUMKMData();
             }
         }
 
-        // Mainkan respons AI dengan suara
-        function playResponse() {
-            if (currentMessages.length === 0) return;
-            
-            // Cari pesan AI terakhir
-            let lastAIMessage = null;
-            for (let i = currentMessages.length - 1; i >= 0; i--) {
-                if (currentMessages[i].sender === 'ai') {
-                    lastAIMessage = currentMessages[i].content;
-                    break;
-                }
-            }
-            
-            if (!lastAIMessage) return;
-            
-            // Hentikan pembacaan sebelumnya jika ada
-            stopPlayback();
-            
-            // Buat utterance baru
-            currentUtterance = new SpeechSynthesisUtterance(lastAIMessage);
-            
-            // Atur suara berdasarkan panduan
-            const voices = speechSynthesis.getVoices();
-            if (voices.length > 0) {
-                // Coba temukan voice yang sesuai
-                let selectedVoice = null;
+        // Simple CSV parser
+        function parseCSV(csv) {
+            const lines = csv.split('\n');
+            return lines.map(line => {
+                // Handle quoted values with commas
+                const result = [];
+                let inQuotes = false;
+                let currentField = '';
                 
-                // Logika sederhana untuk memilih voice berdasarkan tipe
-                if (currentGuide.voice === 'male-1') {
-                    selectedVoice = voices.find(v => v.lang === 'id-ID' && v.name.includes('Male')) || 
-                                    voices.find(v => v.lang.includes('id')) ||
-                                    voices[0];
-                } else if (currentGuide.voice === 'female-1') {
-                    selectedVoice = voices.find(v => v.lang === 'id-ID' && v.name.includes('Female')) || 
-                                    voices.find(v => v.lang.includes('id')) ||
-                                    voices[0];
-                } else if (currentGuide.voice === 'male-2') {
-                    selectedVoice = voices.find(v => v.lang === 'id-ID' && v.name.includes('Male')) || 
-                                    voices.find(v => v.lang.includes('id')) ||
-                                    voices[0];
-                } else if (currentGuide.voice === 'female-2') {
-                    selectedVoice = voices.find(v => v.lang === 'id-ID' && v.name.includes('Female')) || 
-                                    voices.find(v => v.lang.includes('id')) ||
-                                    voices[0];
-                } else if (currentGuide.voice === 'male-3') {
-                    selectedVoice = voices.find(v => v.lang === 'id-ID' && v.name.includes('Male')) || 
-                                    voices.find(v => v.lang.includes('id')) ||
-                                    voices[0];
-                } else if (currentGuide.voice === 'female-3') {
-                    selectedVoice = voices.find(v => v.lang === 'id-ID' && v.name.includes('Female')) || 
-                                    voices.find(v => v.lang.includes('id')) ||
-                                    voices[0];
+                for (let i = 0; i < line.length; i++) {
+                    const char = line[i];
+                    if (char === '"') {
+                        inQuotes = !inQuotes;
+                    } else if (char === ',' && !inQuotes) {
+                        result.push(currentField);
+                        currentField = '';
+                    } else {
+                        currentField += char;
+                    }
+                }
+                result.push(currentField);
+                return result;
+            });
+        }
+
+        // Fallback UMKM data if API fails
+        function loadFallbackUMKMData() {
+            umkmData = [
+                {
+                    name: "Warung Sate Gule Pak Slamet",
+                    address: "Jl. Mastrip No. 45, Probolinggo",
+                    description: "Sate gule kambing dengan resep turun temurun sejak 1975",
+                    photo: "https://i.imgur.com/abc123.jpg",
+                    lat: -7.7568,
+                    lng: 113.2113,
+                    products: "Sate Gule Kambing, Nasi Jagung",
+                    whatsapp: "628123456789",
+                    healingEffect: "tenang, nostalgia"
+                },
+                {
+                    name: "Bakso Presiden Probolinggo",
+                    address: "Jl. Panglima Sudirman No. 12, Probolinggo",
+                    description: "Bakso kenyal dengan kuah kaldu sapi 12 jam",
+                    photo: "https://i.imgur.com/def456.jpg",
+                    lat: -7.7582,
+                    lng: 113.2187,
+                    products: "Bakso, Mie Ayam",
+                    whatsapp: "628987654321",
+                    healingEffect: "gembira, hangat"
+                },
+                {
+                    name: "Tape Manis Bu Siti",
+                    address: "Jl. Dr. Soetomo No. 8, Probolinggo",
+                    description: "Tape singkong manis alami tanpa pengawet",
+                    photo: "https://i.imgur.com/ghi789.jpg",
+                    lat: -7.7521,
+                    lng: 113.2150,
+                    products: "Tape Singkong, Tape Ketan",
+                    whatsapp: "6281122334455",
+                    healingEffect: "nostalgia, manis"
+                }
+            ];
+            
+            // Populate UMKM dropdown
+            populateUMKMDropdown();
+            
+            // Add UMKM markers to map
+            addUMMarkers();
+        }
+
+        // Populate UMKM dropdown
+        function populateUMKMDropdown() {
+            umkmNameSelect.innerHTML = '<option value="">Pilih UMKM</option>';
+            umkmData.forEach(umkm => {
+                const option = document.createElement('option');
+                option.value = umkm.name;
+                option.textContent = umkm.name;
+                umkmNameSelect.appendChild(option);
+            });
+        }
+
+        // Add UMKM markers to map
+        function addUMMarkers() {
+            // Clear existing markers first
+            map.eachLayer(layer => {
+                if (layer instanceof L.Marker && layer !== userMarker) {
+                    map.removeLayer(layer);
+                }
+            });
+
+            umkmData.forEach(umkm => {
+                if (umkm.lat && umkm.lng) {
+                    const marker = L.marker([umkm.lat, umkm.lng], {
+                        icon: L.divIcon({
+                            className: 'umkm-marker',
+                            html: '<i class="fas fa-utensils" style="color: #34a853; font-size: 20px;"></i>',
+                            iconSize: [20, 20]
+                        })
+                    }).addTo(map);
+                    
+                    marker.bindPopup(`
+                        <div style="max-width: 200px;">
+                            <h4 style="margin: 0 0 5px 0; color: var(--primary-color);">${umkm.name}</h4>
+                            <img src="${umkm.photo || 'https://via.placeholder.com/200x150?text=UMKM'}" style="width:100%; height:auto; border-radius:8px; margin-bottom:8px;">
+                            <p style="margin: 0 0 5px 0; font-size: 12px;"><strong>Menu:</strong> ${umkm.products}</p>
+                            <p style="margin: 0 0 5px 0; font-size: 12px;"><strong>Alamat:</strong> ${umkm.address}</p>
+                            <div style="display: flex; gap: 5px; margin-top: 10px;">
+                                <a href="https://wa.me/${umkm.whatsapp}" target="_blank" style="background: #25D366; color: white; padding: 5px 10px; border-radius: 5px; text-decoration: none; font-size: 12px;">
+                                    <i class="fab fa-whatsapp"></i> WhatsApp
+                                </a>
+                                <a href="https://www.google.com/maps/dir/?api=1&destination=${umkm.lat},${umkm.lng}" target="_blank" style="background: #4285F4; color: white; padding: 5px 10px; border-radius: 5px; text-decoration: none; font-size: 12px;">
+                                    <i class="fas fa-directions"></i> Rute
+                                </a>
+                            </div>
+                        </div>
+                    `);
+                }
+            });
+        }
+
+        // Find healing food based on mood and preference
+        async function findHealingFood() {
+            if (!userLocation) {
+                alert('Silakan aktifkan lokasi Anda terlebih dahulu.');
+                return;
+            }
+            
+            const activeMoodBtn = document.querySelector('.mood-btn.active');
+            if (!activeMoodBtn) {
+                alert('Silakan pilih mood Anda terlebih dahulu.');
+                return;
+            }
+            
+            const mood = activeMoodBtn.dataset.mood;
+            const preference = preferenceSelect.value;
+            
+            findFoodBtn.disabled = true;
+            findFoodBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Mencari...';
+            
+            recommendationsContainer.classList.add('hidden');
+            recommendationsList.innerHTML = '<div class="loading"><div class="spinner"></div></div>';
+            
+            try {
+                // Filter recommendations
+                const recommendations = getRecommendations(mood, preference);
+                
+                displayRecommendations(recommendations);
+                
+                recommendationsContainer.classList.remove('hidden');
+            } catch (error) {
+                console.error('Error finding food:', error);
+                alert('Terjadi kesalahan saat mencari rekomendasi.');
+            } finally {
+                findFoodBtn.disabled = false;
+                findFoodBtn.innerHTML = '<i class="fas fa-utensils"></i> Temukan Makanan Healing';
+            }
+        }
+
+        // Get recommendations based on mood and preference
+        function getRecommendations(mood, preference) {
+            // Filter UMKM based on preference and mood
+            let filteredUMKM = umkmData.filter(umkm => {
+                // Filter by preference if selected
+                if (preference) {
+                    const hasPreference = 
+                        (preference === 'manis' && umkm.products.toLowerCase().includes('manis')) ||
+                        (preference === 'pedas' && umkm.products.toLowerCase().includes('pedas')) ||
+                        (preference === 'gurih' && umkm.products.toLowerCase().includes('gurih')) ||
+                        (preference === 'hangat' && umkm.products.toLowerCase().includes('hangat'));
+                    
+                    if (!hasPreference) return false;
                 }
                 
-                if (selectedVoice) {
-                    currentUtterance.voice = selectedVoice;
+                // Filter by mood if UMKM has healing effect data
+                if (umkm.healingEffect) {
+                    return umkm.healingEffect.toLowerCase().includes(mood);
                 }
-            }
+                
+                return true;
+            });
             
-            // Atur kecepatan dan pitch
-            currentUtterance.lang = 'id-ID';
-            currentUtterance.rate = 0.9;
-            currentUtterance.pitch = 1;
+            // Calculate distance for each UMKM
+            filteredUMKM.forEach(umkm => {
+                umkm.distance = calculateDistance(
+                    userLocation.lat, userLocation.lng, 
+                    umkm.lat, umkm.lng
+                );
+            });
             
-            // Event ketika selesai berbicara
-            currentUtterance.onend = function() {
-                console.log("Finished speaking");
-            };
+            // Sort by distance (nearest first)
+            filteredUMKM.sort((a, b) => a.distance - b.distance);
             
-            // Mulai berbicara
-            speechSynthesis.speak(currentUtterance);
+            // Generate recommendations
+            return filteredUMKM.slice(0, 3).map(umkm => {
+                let recommendationText = '';
+                let healingEffect = '';
+                
+                // Custom messages based on mood
+                switch (mood) {
+                    case 'lelah':
+                        healingEffect = 'mengembalikan energi';
+                        recommendationText = `Kamu terlihat lelah. Coba ${umkm.products.split(',')[0]} di ${umkm.name} untuk ${healingEffect}, hanya ${Math.round(umkm.distance * 1000)} meter dari lokasimu.`;
+                        break;
+                    case 'sedih':
+                        healingEffect = 'menghangatkan hati';
+                        recommendationText = `Ketika sedih, ${umkm.products.split(',')[0]} di ${umkm.name} bisa ${healingEffect}. Hanya ${Math.round(umkm.distance * 1000)} meter dari lokasimu.`;
+                        break;
+                    case 'gembira':
+                        healingEffect = 'melengkapi kebahagiaanmu';
+                        recommendationText = `Kebahagiaanmu akan lebih lengkap dengan ${umkm.products.split(',')[0]} di ${umkm.name}, hanya ${Math.round(umkm.distance * 1000)} meter dari lokasimu.`;
+                        break;
+                    case 'nostalgia':
+                        healingEffect = 'mengajak bernostalgia';
+                        recommendationText = `Rasakan nostalgia dengan ${umkm.products.split(',')[0]} di ${umkm.name} yang ${healingEffect}, hanya ${Math.round(umkm.distance * 1000)} meter dari lokasimu.`;
+                        break;
+                    default:
+                        recommendationText = `Kami merekomendasikan ${umkm.products.split(',')[0]} di ${umkm.name}, hanya ${Math.round(umkm.distance * 1000)} meter dari lokasimu.`;
+                }
+                
+                return {
+                    umkm,
+                    recommendationText,
+                    distance: umkm.distance
+                };
+            });
         }
 
-        // Hentikan pembacaan suara
-        function stopPlayback() {
-            if (speechSynthesis.speaking) {
-                speechSynthesis.cancel();
+        // Display recommendations
+        function displayRecommendations(recommendations) {
+            recommendationsList.innerHTML = '';
+            
+            if (recommendations.length === 0) {
+                recommendationsList.innerHTML = '<p>Waduh belum ada rekomendasi kuliner untuk anda</p>';
+                return;
             }
+            
+            recommendations.forEach(rec => {
+                const recommendationElement = document.createElement('div');
+                recommendationElement.className = 'recommendation';
+                recommendationElement.innerHTML = `
+                    <div class="recommendation-title">${rec.umkm.name}</div>
+                    <div class="recommendation-distance">${Math.round(rec.distance * 1000)} meter dari lokasimu</div>
+                    <img src="${rec.umkm.photo || 'https://via.placeholder.com/300x200?text=UMKM'}" style="width:100%; height:auto; border-radius:8px; margin:10px 0;">
+                    <p>${rec.recommendationText}</p>
+                    <p><small>${rec.umkm.description}</small></p>
+                    <div class="recommendation-actions">
+                        <a href="https://wa.me/${rec.umkm.whatsapp}" target="_blank" class="btn btn-secondary" style="flex: 1;">
+                            <i class="fab fa-whatsapp"></i> Hubungi
+                        </a>
+                        <a href="https://www.google.com/maps/dir/?api=1&destination=${rec.umkm.lat},${rec.umkm.lng}" target="_blank" class="btn" style="flex: 1;">
+                            <i class="fas fa-directions"></i> Rute
+                        </a>
+                    </div>
+                `;
+                recommendationsList.appendChild(recommendationElement);
+                
+                // Zoom to the recommended location
+                map.setView([rec.umkm.lat, rec.umkm.lng], 15);
+            });
         }
 
-        // Inisialisasi voices saat halaman dimuat
-        window.onload = function() {
-            // Load voices untuk speech synthesis
-            speechSynthesis.onvoiceschanged = function() {
-                console.log("Voices loaded");
-            };
+        // Save transaction
+        function saveTransaction(e) {
+            e.preventDefault();
             
-            // Jika voices belum dimuat, paksa load
-            if (speechSynthesis.getVoices().length === 0) {
-                speechSynthesis.addEventListener('voiceschanged', function() {
-                    console.log("Voices loaded after event");
-                });
+            const umkmName = umkmNameSelect.value;
+            const foodName = document.getElementById('food-name').value;
+            const amount = parseInt(document.getElementById('amount').value);
+            
+            if (!umkmName || !foodName || !amount) {
+                alert('Silakan lengkapi semua field.');
+                return;
             }
-        };
+            
+            // In a real app, you would save this to a database
+            totalAmount += amount;
+            updateTracker();
+            
+            // Show badge if threshold reached
+            if (totalAmount >= 100000 && badgeContainer.classList.contains('hidden')) {
+                badgeContainer.classList.remove('hidden');
+            }
+            
+            // Reset form and close modal
+            transactionForm.reset();
+            transactionModal.style.display = 'none';
+            
+            alert(`Transaksi ${foodName} di ${umkmName} senilai Rp ${amount.toLocaleString()} berhasil dicatat. Terima kasih telah mendukung UMKM lokal!`);
+        }
+
+        // Update tracker UI
+        function updateTracker() {
+            totalAmountElement.textContent = `Rp ${totalAmount.toLocaleString()}`;
+            
+            // Calculate progress (max 10,000,000)
+            const progress = Math.min((totalAmount / 10000000) * 100, 100);
+            progressBar.style.width = `${progress}%`;
+        }
+
+        // Calculate distance between two coordinates in km
+        function calculateDistance(lat1, lon1, lat2, lon2) {
+            const R = 6371; // Radius of the earth in km
+            const dLat = deg2rad(lat2 - lat1);
+            const dLon = deg2rad(lon2 - lon1);
+            const a = 
+                Math.sin(dLat/2) * Math.sin(dLat/2) +
+                Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) * 
+                Math.sin(dLon/2) * Math.sin(dLon/2);
+            const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+            return R * c; // Distance in km
+        }
+
+        function deg2rad(deg) {
+            return deg * (Math.PI/180);
+        }
+
+        // Initialize the app when DOM is loaded
+        document.addEventListener('DOMContentLoaded', init);
     </script>
 </body>
 </html>
